@@ -9,9 +9,22 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+var colours = []lipgloss.Color{
+  lipgloss.Color("#f45555"),
+  lipgloss.Color("#f4ba55"),
+  lipgloss.Color("#f4ec55"),
+  lipgloss.Color("#78f455"),
+  lipgloss.Color("#55f4b7"),
+  lipgloss.Color("#55dff4"),
+  lipgloss.Color("#5588f4"),
+  lipgloss.Color("#cd55f4"),
+}
+const message = "Happy Bday Annie <3  I love you and I wish you the happiest time of your life";
+
 type System struct {
 	Frame     Frame
 	Particles []*Particle
+        frame int
 }
 
 type Particle struct {
@@ -89,7 +102,17 @@ func (s *System) Render() string {
 			}
 		}
 	}
-	for i := range plane {
+
+        s.frame = (s.frame + 1) % len(colours)
+
+        for i := range plane {
+          if i == 0 {
+            fmt.Fprintf(&out, "\n")
+            fmt.Fprintf(&out, strings.Repeat(" ", (s.Frame.Width - len(message)) / 2))
+           fmt.Fprintf(&out, lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("#FFFFFF")).Background(lipgloss.Color(colours[s.frame])).Render(message))
+           fmt.Fprintf(&out, "\n\n")
+            continue
+          }
 		for _, col := range plane[i] {
 			if col == "" {
 				fmt.Fprint(&out, " ")
@@ -99,5 +122,6 @@ func (s *System) Render() string {
 		}
 		fmt.Fprint(&out, "\n")
 	}
+
 	return out.String()
 }

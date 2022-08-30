@@ -32,7 +32,8 @@ func animate() tea.Cmd {
 
 // Confetti model
 type model struct {
-	system *simulation.System
+	system  *simulation.System
+	counter int
 }
 
 func Spawn(width, height int) []*simulation.Particle {
@@ -79,10 +80,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		}
-		m.system.Particles = append(m.system.Particles, Spawn(m.system.Frame.Width, m.system.Frame.Height)...)
 
 		return m, nil
 	case frameMsg:
+		m.counter = (m.counter + 1) % 18
+		if m.counter == 0 {
+			m.system.Particles = append(m.system.Particles, Spawn(m.system.Frame.Width, m.system.Frame.Height)...)
+		}
 		m.system.Update()
 		return m, animate()
 	case tea.WindowSizeMsg:
